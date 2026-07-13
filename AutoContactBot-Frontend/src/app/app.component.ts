@@ -13,7 +13,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     // Set default language to Uzbek
-    this.translate.setDefaultLanguage('uz');
+    this.translate.setDefaultLang('uz');
     this.translate.use('uz');
   }
 }

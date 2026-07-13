@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { ChartsModule } from 'ng2-charts';
+import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
   imports: [
@@ -12,7 +12,7 @@ import { ChartsModule } from 'ng2-charts';
     ReactiveFormsModule,
     NgbModule,
     TranslateModule,
-    ChartsModule,
+    NgChartsModule,
   ],
   exports: [
     CommonModule,
@@ -20,7 +20,7 @@ import { ChartsModule } from 'ng2-charts';
     ReactiveFormsModule,
     NgbModule,
     TranslateModule,
-    ChartsModule,
+    NgChartsModule,
   ],
 })
 export class SharedModule {}

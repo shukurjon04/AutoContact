@@ -1,0 +1,194 @@
+version: "3.9"
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: subbot_postgres_prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - subbot_network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: subbot_redis_prod
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_password}
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - subbot_network
+
+  # Django Backend
+  django:
+    image: subbot-backend:latest
+    container_name: subbot_django_prod
+    restart: unless-stopped
+    command: >
+      sh -c "python manage.py migrate &&
+             gunicorn -b 0.0.0.0:8000 -w 4 config.wsgi:application"
+    environment:
+      DEBUG: "False"
+      DJANGO_SETTINGS_MODULE: config.settings.production
+      DOMAIN: ${DOMAIN}
+      SECRET_KEY: ${SECRET_KEY}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_URL: redis://:${REDIS_PASSWORD:-redis_password}@redis:6379/0
+      CELERY_BROKER_URL: redis://:${REDIS_PASSWORD:-redis_password}@redis:6379/0
+      CELERY_RESULT_BACKEND: redis://:${REDIS_PASSWORD:-redis_password}@redis:6379/1
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+      CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS}
+      CORS_ALLOWED_ORIGINS: https://${DOMAIN}
+    expose:
+      - 8000
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+      - logs_volume:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - subbot_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Celery Worker
+  celery_worker:
+    image: subbot-backend:latest
+    container_name: subbot_celery_prod
+    restart: unless-stopped
+    command: celery -A config worker -l info
+    environment:
+      DEBUG: "False"
+      DJANGO_SETTINGS_MODULE: config.settings.production
+      DOMAIN: ${DOMAIN}
+      SECRET_KEY: ${SECRET_KEY}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_URL: redis://:${REDIS_PASSWORD:-redis_password}@redis:6379/0
+      CELERY_BROKER_URL: redis://:${REDIS_PASSWORD:-redis_password}@redis:6379/0
+    volumes:
+      - logs_volume:/app/logs
+    depends_on:
+      - postgres
+      - redis
+      - django
+    networks:
+      - subbot_network
+
+  # Celery Beat (Scheduler)
+  celery_beat:
+    image: subbot-backend:latest
+    container_name: subbot_celery_beat_prod
+    restart: unless-stopped
+    command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    environment:
+      DEBUG: "False"
+      DJANGO_SETTINGS_MODULE: config.settings.production
+      DOMAIN: ${DOMAIN}
+      SECRET_KEY: ${SECRET_KEY}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_URL: redis://:${REDIS_PASSWORD:-redis_password}@redis:6379/0
+      CELERY_BROKER_URL: redis://:${REDIS_PASSWORD:-redis_password}@redis:6379/0
+    volumes:
+      - logs_volume:/app/logs
+    depends_on:
+      - postgres
+      - redis
+      - django
+    networks:
+      - subbot_network
+
+  # Telegram Bot
+  bot:
+    image: subbot-backend:latest
+    container_name: subbot_bot_prod
+    restart: unless-stopped
+    command: python bot/main.py
+    environment:
+      DEBUG: "False"
+      DJANGO_SETTINGS_MODULE: config.settings.production
+      BOT_MODE: webhook
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      WEBHOOK_HOST: ${WEBHOOK_HOST}
+      WEBHOOK_SECRET_TOKEN: ${WEBHOOK_SECRET_TOKEN}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_URL: redis://:${REDIS_PASSWORD:-redis_password}@redis:6379/0
+    depends_on:
+      - postgres
+      - redis
+      - django
+    networks:
+      - subbot_network
+
+  # Frontend
+  frontend:
+    image: subbot-frontend:latest
+    container_name: subbot_frontend_prod
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - certbot_certs:/etc/letsencrypt
+      - certbot_webroot:/var/www/certbot
+    depends_on:
+      - django
+    networks:
+      - subbot_network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_data:
+  redis_data:
+  static_volume:
+  media_volume:
+  logs_volume:
+  certbot_certs:
+  certbot_webroot:
+
+networks:
+  subbot_network:
+    driver: bridge

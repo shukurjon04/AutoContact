@@ -213,7 +213,7 @@ services:
   bot:
     build:
       context: .
-      dockerfile: docker/Dockerfile.django
+      dockerfile: docker/Dockerfile.bot
     container_name: subbot_bot
     restart: unless-stopped
     command: python bot/main.py

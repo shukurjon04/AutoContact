@@ -167,9 +167,12 @@ services:
       - .:/app
       - logs_volume:/app/logs
     depends_on:
-      - postgres
-      - redis
-      - django
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      django:
+        condition: service_healthy
     networks:
       - subbot_network
 
@@ -198,9 +201,12 @@ services:
       - .:/app
       - logs_volume:/app/logs
     depends_on:
-      - postgres
-      - redis
-      - django
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      django:
+        condition: service_healthy
     networks:
       - subbot_network
 
@@ -235,9 +241,12 @@ services:
       - .:/app
       - logs_volume:/app/logs
     depends_on:
-      - postgres
-      - redis
-      - django
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      django:
+        condition: service_healthy
     networks:
       - subbot_network
 
@@ -260,7 +269,8 @@ services:
       - certbot_webroot:/var/www/certbot:ro
       - logs_volume:/var/log/nginx:rw
     depends_on:
-      - django
+      django:
+        condition: service_healthy
     networks:
       - subbot_network
     healthcheck:

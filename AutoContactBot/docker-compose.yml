@@ -216,7 +216,7 @@ services:
       dockerfile: docker/Dockerfile.bot
     container_name: subbot_bot
     restart: unless-stopped
-    command: python bot/main.py
+    command: python -m bot.main
     environment:
       DEBUG: ${DEBUG:-False}
       DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-config.settings.production}

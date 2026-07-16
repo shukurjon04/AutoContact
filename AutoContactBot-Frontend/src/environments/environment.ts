@@ -1,8 +1,8 @@
 export const environment = {
-  production: false,
-  apiUrl: 'http://localhost:8000/api/v1',
-  baseUrl: 'http://localhost:4200',
-  wsUrl: 'ws://localhost:8000/ws',
+  production: true,
+  apiUrl: 'https://bot.robotronix.uz/api/v1',
+  baseUrl: 'https://bot.robotronix.uz',
+  wsUrl: 'wss://bot.robotronix.uz/ws',
   tokenKey: 'access_token',
   refreshTokenKey: 'refresh_token',
 };

@@ -1,0 +1,124 @@
+<div class="users-container">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="text-white mb-0">User Management</h3>
+    <span class="badge bg-primary rounded-pill px-3 py-2">{{ totalItems }} total</span>
+  </div>
+
+  <!-- Filters Bar -->
+  <div class="glass-card p-3 mb-4">
+    <div class="row g-3 align-items-center">
+      <div class="col-md-6">
+        <div class="position-relative">
+          <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+          <input 
+            type="text" 
+            class="form-control ps-5 rounded-pill" 
+            placeholder="Search by name, username or Telegram ID..."
+            [(ngModel)]="searchQuery"
+            (keyup.enter)="onSearch()">
+        </div>
+      </div>
+      <div class="col-md-3">
+        <select class="form-select rounded-pill" [(ngModel)]="statusFilter" (change)="onFilterChange()">
+          <option value="">All Status</option>
+          <option value="active">Active</option>
+          <option value="blocked">Blocked</option>
+        </select>
+      </div>
+      <div class="col-md-3 text-end">
+        <button class="btn btn-glass rounded-pill" (click)="onSearch()">
+          <i class="bi bi-funnel me-1"></i> Filter
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="glass-card p-0 overflow-hidden" *ngIf="!isLoading">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th class="ps-4">User</th>
+            <th>Telegram ID</th>
+            <th>Language</th>
+            <th>Status</th>
+            <th>Joined</th>
+            <th class="text-end pe-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users" class="animate-fade-in">
+            <td class="ps-4">
+              <div class="d-flex align-items-center">
+                <div class="user-avatar me-3">
+                  {{ (user.first_name || 'U')[0] | uppercase }}
+                </div>
+                <div>
+                  <div class="text-white fw-semibold">{{ user.first_name || 'Unknown' }} {{ user.last_name || '' }}</div>
+                  <small class="text-muted">@{{ user.username || 'no_username' }}</small>
+                </div>
+              </div>
+            </td>
+            <td>
+              <code class="text-primary">{{ user.telegram_id }}</code>
+            </td>
+            <td>
+              <span class="badge badge-lang">{{ user.language_code || 'uz' }}</span>
+            </td>
+            <td>
+              <span class="badge rounded-pill px-3 py-1" [ngClass]="user.is_blocked ? 'bg-danger' : 'bg-success'">
+                {{ user.is_blocked ? 'Blocked' : 'Active' }}
+              </span>
+            </td>
+            <td>
+              <span class="text-muted small">{{ user.created_at | date:'mediumDate' }}</span>
+            </td>
+            <td class="text-end pe-4">
+              <div class="btn-group">
+                <button class="btn btn-sm btn-glass" *ngIf="!user.is_blocked" (click)="blockUser(user)" title="Block User">
+                  <i class="bi bi-slash-circle text-warning"></i>
+                </button>
+                <button class="btn btn-sm btn-glass" *ngIf="user.is_blocked" (click)="unblockUser(user)" title="Unblock User">
+                  <i class="bi bi-check-circle text-success"></i>
+                </button>
+                <button class="btn btn-sm btn-glass" (click)="deleteUser(user)" title="Delete User">
+                  <i class="bi bi-trash text-danger"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="users.length === 0">
+            <td colspan="6" class="text-center py-5 text-muted">
+              <i class="bi bi-people fs-1 d-block mb-2"></i>
+              No users found
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-between align-items-center p-3 border-top" style="border-color: var(--glass-border) !important;" *ngIf="totalItems > pageSize">
+      <span class="text-muted small">
+        Showing {{ (currentPage - 1) * pageSize + 1 }} - {{ currentPage * pageSize > totalItems ? totalItems : currentPage * pageSize }} of {{ totalItems }}
+      </span>
+      <ngb-pagination 
+        [collectionSize]="totalItems" 
+        [(page)]="currentPage" 
+        [pageSize]="pageSize"
+        [maxSize]="5" 
+        [rotate]="true"
+        (pageChange)="onPageChange($event)">
+      </ngb-pagination>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</div>

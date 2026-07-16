@@ -1,7 +1,10 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { SharedModule } from '../../shared/shared.module';
+import { ChannelsRoutingModule } from './channels-routing.module';
+import { ChannelListComponent } from './pages/channel-list/channel-list.component';
 
 @NgModule({
-  imports: [CommonModule],
+  declarations: [ChannelListComponent],
+  imports: [SharedModule, ChannelsRoutingModule],
 })
 export class ChannelsModule {}

@@ -1,0 +1,91 @@
+<div class="dashboard-container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0 text-white font-weight-bold">Overview</h3>
+    <button class="btn btn-primary d-flex align-items-center">
+      <i class="bi bi-cloud-download me-2"></i> Export Report
+    </button>
+  </div>
+
+  <div class="row g-4 mb-4" *ngIf="!isLoading && stats">
+    <div class="col-md-3">
+      <app-stats-card 
+        title="Active Subscribers" 
+        [value]="stats.active_subscribers" 
+        icon="bi-people" 
+        colorClass="text-primary"
+        trend="+12.5%">
+      </app-stats-card>
+    </div>
+    <div class="col-md-3">
+      <app-stats-card 
+        title="Total Revenue (UZS)" 
+        [value]="stats.total_revenue" 
+        icon="bi-currency-dollar" 
+        colorClass="text-success"
+        trend="+8.2%">
+      </app-stats-card>
+    </div>
+    <div class="col-md-3">
+      <app-stats-card 
+        title="Pending Approvals" 
+        [value]="stats.pending_transactions" 
+        icon="bi-hourglass-split" 
+        colorClass="text-warning">
+      </app-stats-card>
+    </div>
+    <div class="col-md-3">
+      <app-stats-card 
+        title="Expiring Soon" 
+        [value]="stats.expiring_soon" 
+        icon="bi-exclamation-circle" 
+        colorClass="text-danger">
+      </app-stats-card>
+    </div>
+  </div>
+
+  <div class="row g-4" *ngIf="!isLoading">
+    <div class="col-md-8">
+      <app-revenue-chart></app-revenue-chart>
+    </div>
+    <div class="col-md-4">
+      <div class="glass-card p-4 h-100">
+        <h5 class="text-white mb-4">Recent Activity</h5>
+        <div class="activity-feed">
+          <div class="activity-item d-flex mb-3">
+            <div class="activity-icon bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3">
+              <i class="bi bi-check2"></i>
+            </div>
+            <div>
+              <p class="mb-0 text-white small">Payment approved for <strong>User #102</strong></p>
+              <small class="text-muted">2 mins ago</small>
+            </div>
+          </div>
+          <div class="activity-item d-flex mb-3">
+            <div class="activity-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3">
+              <i class="bi bi-person-plus"></i>
+            </div>
+            <div>
+              <p class="mb-0 text-white small">New subscriber to <strong>Premium Channel</strong></p>
+              <small class="text-muted">15 mins ago</small>
+            </div>
+          </div>
+          <div class="activity-item d-flex">
+            <div class="activity-icon bg-warning text-white rounded-circle d-flex align-items-center justify-content-center me-3">
+              <i class="bi bi-send"></i>
+            </div>
+            <div>
+              <p class="mb-0 text-white small">Broadcast <strong>"Update 2.0"</strong> finished</p>
+              <small class="text-muted">1 hour ago</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</div>

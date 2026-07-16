@@ -1,0 +1,24 @@
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-dark);
+}
+
+.main-content {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  transition: margin-left var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  &.expanded {
+    margin-left: 80px;
+  }
+}
+
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}

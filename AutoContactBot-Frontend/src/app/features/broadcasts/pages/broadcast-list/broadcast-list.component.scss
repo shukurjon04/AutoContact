@@ -1,0 +1,10 @@
+.progress-bar {
+  transition: width 0.5s ease-in-out;
+}
+
+.text-truncate {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

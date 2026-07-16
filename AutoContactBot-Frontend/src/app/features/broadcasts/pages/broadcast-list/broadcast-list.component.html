@@ -1,0 +1,71 @@
+<div class="broadcasts-container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="text-white mb-0">Broadcasts</h3>
+    <button class="btn btn-primary d-flex align-items-center">
+      <i class="bi bi-send-plus me-2"></i> New Broadcast
+    </button>
+  </div>
+
+  <div class="glass-card p-0 overflow-hidden" *ngIf="!isLoading">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th class="ps-4">Message</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Target</th>
+            <th>Stats (Sent/Total)</th>
+            <th class="text-end pe-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let bc of broadcasts" class="animate-fade-in">
+            <td class="ps-4">
+              <div class="fw-semibold text-white text-truncate" style="max-width: 250px;">{{ bc.text }}</div>
+              <small class="text-muted">{{ bc.created_at | date:'short' }}</small>
+            </td>
+            <td>
+              <span class="badge bg-secondary">{{ bc.type | uppercase }}</span>
+            </td>
+            <td>
+              <span class="badge rounded-pill px-3 py-1" 
+                [ngClass]="{
+                  'bg-warning text-dark': bc.status === 'draft',
+                  'bg-info': bc.status === 'sending',
+                  'bg-success': bc.status === 'completed',
+                  'bg-danger': bc.status === 'failed'
+                }">
+                {{ bc.status | uppercase }}
+              </span>
+            </td>
+            <td>
+              <span class="text-white">{{ bc.target_type === 'all' ? 'All Users' : 'Subscribers Only' }}</span>
+            </td>
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="progress flex-grow-1 me-2" style="height: 6px; background-color: rgba(255,255,255,0.1);">
+                  <div class="progress-bar bg-primary" [style.width.%]="bc.total_recipients ? (bc.sent_count / bc.total_recipients * 100) : 0"></div>
+                </div>
+                <span class="small text-muted">{{ bc.sent_count }}/{{ bc.total_recipients || 0 }}</span>
+              </div>
+            </td>
+            <td class="text-end pe-4">
+              <button class="btn btn-sm btn-glass text-success" *ngIf="bc.status === 'draft'" (click)="launchBroadcast(bc)" title="Launch"><i class="bi bi-play-fill"></i></button>
+              <button class="btn btn-sm btn-glass text-info ms-1" title="View"><i class="bi bi-eye"></i></button>
+            </td>
+          </tr>
+          <tr *ngIf="broadcasts.length === 0">
+            <td colspan="6" class="text-center py-5 text-muted">
+              <i class="bi bi-broadcast fs-1 d-block mb-2"></i> No broadcasts found
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="d-flex justify-content-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+</div>

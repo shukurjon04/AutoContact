@@ -1,0 +1,51 @@
+.navbar {
+  margin: 1rem 1rem 0 1rem;
+  border-radius: var(--radius-md);
+}
+
+.search-box {
+  width: 300px;
+  
+  .form-control {
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+    transition: all var(--transition-fast);
+    
+    &:focus {
+      background-color: rgba(255, 255, 255, 0.08);
+      width: 350px;
+    }
+  }
+}
+
+.avatar-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  background: linear-gradient(135deg, var(--primary), var(--accent)) !important;
+  box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.hover-white:hover {
+  color: white !important;
+}
+
+.dropdown-menu {
+  display: block;
+  min-width: 200px;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  
+  .dropdown-item {
+    transition: background var(--transition-fast);
+    
+    &:hover, &:focus {
+      background: rgba(255, 255, 255, 0.08);
+    }
+  }
+}

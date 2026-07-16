@@ -1,0 +1,57 @@
+<aside class="sidebar glass-card" [class.collapsed]="isCollapsed">
+  <div class="sidebar-header d-flex align-items-center justify-content-between p-3">
+    <h4 class="mb-0 text-white brand-title" *ngIf="!isCollapsed">SubBot</h4>
+    <h4 class="mb-0 text-white brand-title text-center w-100" *ngIf="isCollapsed">S</h4>
+    <button class="btn btn-sm btn-glass hide-on-mobile" (click)="toggleSidebar()">
+      <i class="bi" [class.bi-chevron-left]="!isCollapsed" [class.bi-chevron-right]="isCollapsed"></i>
+    </button>
+  </div>
+
+  <div class="sidebar-menu p-2">
+    <ul class="nav flex-column gap-1">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">
+          <i class="bi bi-grid-1x2"></i>
+          <span *ngIf="!isCollapsed" class="ms-2">Dashboard</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/users" routerLinkActive="active">
+          <i class="bi bi-people"></i>
+          <span *ngIf="!isCollapsed" class="ms-2">Users</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/channels" routerLinkActive="active">
+          <i class="bi bi-megaphone"></i>
+          <span *ngIf="!isCollapsed" class="ms-2">Channels</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/subscriptions" routerLinkActive="active">
+          <i class="bi bi-card-checklist"></i>
+          <span *ngIf="!isCollapsed" class="ms-2">Subscriptions</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/payments" routerLinkActive="active">
+          <i class="bi bi-currency-dollar"></i>
+          <span *ngIf="!isCollapsed" class="ms-2">Payments</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/broadcasts" routerLinkActive="active">
+          <i class="bi bi-broadcast"></i>
+          <span *ngIf="!isCollapsed" class="ms-2">Broadcasts</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="sidebar-footer mt-auto p-3">
+    <a class="nav-link text-danger d-flex align-items-center" href="javascript:void(0)" (click)="logout()">
+      <i class="bi bi-box-arrow-right"></i>
+      <span *ngIf="!isCollapsed" class="ms-2">Logout</span>
+    </a>
+  </div>
+</aside>

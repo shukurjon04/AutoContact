@@ -1,0 +1,27 @@
+.dashboard-container {
+  padding-bottom: 2rem;
+}
+
+.activity-icon {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.activity-item {
+  position: relative;
+  
+  &:not(:last-child) {
+    &::after {
+      content: '';
+      position: absolute;
+      left: 17px;
+      top: 36px;
+      bottom: -16px;
+      width: 2px;
+      background-color: var(--glass-border);
+    }
+  }
+}

@@ -57,7 +57,7 @@
                 </div>
                 <div>
                   <div class="text-white fw-semibold">{{ user.first_name || 'Unknown' }} {{ user.last_name || '' }}</div>
-                  <small class="text-muted">@{{ user.username || 'no_username' }}</small>
+                  <small class="text-muted">{{ '@' + (user.username || 'no_username') }}</small>
                 </div>
               </div>
             </td>

@@ -18,8 +18,8 @@ RUN npm run build:prod
 # Production stage - Nginx
 FROM nginx:alpine
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy nginx configuration template
+COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 
 # Copy built application from builder
 COPY --from=builder /app/dist/auto-contact-bot-frontend /usr/share/nginx/html

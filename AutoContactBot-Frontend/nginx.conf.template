@@ -21,10 +21,10 @@ server {
 # HTTPS server
 server {
     listen 443 ssl;
-    server_name bot.robotronix.uz;
+    server_name ${DOMAIN};
 
-    ssl_certificate /etc/letsencrypt/live/bot.robotronix.uz/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/bot.robotronix.uz/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
     
     # SSL configuration
     ssl_protocols TLSv1.2 TLSv1.3;

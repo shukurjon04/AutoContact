@@ -125,7 +125,7 @@ services:
     volumes:
       - static_volume:/app/staticfiles
       - media_volume:/app/media
-      - logs_volume:/app/logs
+      - django_logs_volume:/app/logs
     depends_on:
       postgres:
         condition: service_healthy
@@ -170,7 +170,7 @@ services:
       start_period: 40s
 
     volumes:
-      - logs_volume:/app/logs
+      - django_logs_volume:/app/logs
     depends_on:
       postgres:
         condition: service_healthy
@@ -206,7 +206,7 @@ services:
       disable: true
 
     volumes:
-      - logs_volume:/app/logs
+      - django_logs_volume:/app/logs
     depends_on:
       postgres:
         condition: service_healthy
@@ -245,7 +245,7 @@ services:
       PAYME_SECRET_KEY: ${PAYME_SECRET_KEY:-}
 
     volumes:
-      - logs_volume:/app/logs
+      - django_logs_volume:/app/logs
     depends_on:
       postgres:
         condition: service_healthy
@@ -272,7 +272,7 @@ services:
     volumes:
       - certbot_certs:/etc/letsencrypt:ro
       - certbot_webroot:/var/www/certbot:ro
-      - logs_volume:/var/log/nginx:rw
+      - nginx_logs_volume:/var/log/nginx:rw
     depends_on:
       django:
         condition: service_healthy
@@ -310,7 +310,9 @@ volumes:
     driver: local
   media_volume:
     driver: local
-  logs_volume:
+  django_logs_volume:
+    driver: local
+  nginx_logs_volume:
     driver: local
   certbot_certs:
     driver: local

@@ -50,6 +50,33 @@ server {
         proxy_redirect off;
     }
 
+    location /bot/ {
+        proxy_pass http://bot:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_redirect off;
+    }
+
+    location /payme/ {
+        proxy_pass http://django:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_redirect off;
+    }
+
+    location /health/ {
+        proxy_pass http://django:8000;
+        proxy_set_header Host $host;
+    }
+
+    location /media/ {
+        alias /app/media/;
+    }
+
     location ~* ^/assets/.*\.(js|css|png|jpg|gif|svg|woff|woff2|ttf|eot|json)$ {
         expires 1y;
         add_header Cache-Control "public, immutable";

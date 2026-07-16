@@ -45,23 +45,25 @@ fi
 echo "### Creating dummy certificate for $domains ..."
 path="/etc/letsencrypt/live/$domains"
 mkdir -p "$data_path/conf/live/$domains"
-docker compose run --rm --entrypoint "\
+docker compose run --rm --entrypoint /bin/sh certbot -c "\
   mkdir -p $path && \
   openssl req -x509 -nodes -newkey rsa:$rsa_key_size -days 1\
     -keyout '$path/privkey.pem' \
     -out '$path/fullchain.pem' \
-    -subj '/CN=localhost'" certbot
+    -subj '/CN=localhost'"
 echo
 
 echo "### Starting nginx ..."
 docker compose up --force-recreate -d frontend
+echo "Waiting for nginx to start up..."
+sleep 10
 echo
 
 echo "### Deleting dummy certificate for $domains ..."
-docker compose run --rm --entrypoint "\
+docker compose run --rm --entrypoint /bin/sh certbot -c "\
   rm -Rf /etc/letsencrypt/live/$domains && \
   rm -Rf /etc/letsencrypt/archive/$domains && \
-  rm -Rf /etc/letsencrypt/renewal/$domains.conf" certbot
+  rm -Rf /etc/letsencrypt/renewal/$domains.conf"
 echo
 
 echo "### Requesting Let's Encrypt certificate for $domains ..."
